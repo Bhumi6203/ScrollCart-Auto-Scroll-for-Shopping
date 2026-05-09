@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScrollMate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --surface: #141414;
+      --surface2: #1c1c1c;
+      --border: #252525;
+      --accent: #00e5a0;
+      --accent-dim: rgba(0, 229, 160, 0.12);
+      --text: #e8e8e8;
+      --text-muted: #666;
+      --text-dim: #444;
+      --danger: #ff5c5c;
+      --radius: 12px;
+    }
+
+    body {
+      width: 280px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      user-select: none;
+    }
+
+    /* ── Header ── */
+    .header {
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .logo-text {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .logo-text span {
+      color: var(--accent);
+    }
+
+    .version {
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-dim);
+      background: var(--surface2);
+      padding: 2px 7px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Main Toggle Button ── */
+    .main-section {
+      padding: 18px;
+    }
+
+    #toggle-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      letter-spacing: -0.01em;
+    }
+
+    #toggle-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    #toggle-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0c0c0c;
+      font-weight: 600;
+    }
+
+    #toggle-btn .btn-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: background 0.2s;
+    }
+
+    #toggle-btn.active .btn-dot {
+      background: #0c0c0c;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── Status Bar ── */
+    .status-bar {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      transition: background 0.3s;
+    }
+
+    .status-dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    .shortcut-hint {
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-dim);
+      background: var(--surface2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 18px;
+    }
+
+    /* ── Controls Section ── */
+    .controls {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+    }
+
+    .control-value {
+      font-family: 'DM Mono', monospace;
+      color: var(--accent);
+      font-size: 11px;
+    }
+
+    /* Speed Slider */
+    #speed-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    #speed-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0,229,160,0.4);
+      transition: transform 0.1s;
+    }
+
+    #speed-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Speed labels */
+    .speed-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-dim);
+      margin-top: 2px;
+      padding: 0 2px;
+    }
+
+    /* Direction Buttons */
+    .direction-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .dir-btn {
+      padding: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .dir-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .dir-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Toggle Row */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toggle-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .toggle-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Switch */
+    .switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .slider::before {
+      content: '';
+      position: absolute;
+      height: 12px;
+      width: 12px;
+      left: 3px;
+      bottom: 3px;
+      background: var(--text-dim);
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    input:checked + .slider {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(16px);
+      background: var(--accent);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-text {
+      font-size: 10px;
+      color: var(--text-dim);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .show-btn-link {
+      font-size: 11px;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .show-btn-link:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 2v12M5 10l3 3 3-3" stroke="#0c0c0c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="logo-text">Scroll<span>Mate</span></span>
+    </div>
+    <span class="version">v1.0</span>
+  </div>
+
+  <div class="main-section">
+    <button id="toggle-btn">
+      <span class="btn-dot"></span>
+      <span id="btn-label">Start Scrolling</span>
+    </button>
+
+    <div class="status-bar">
+      <div class="status-indicator">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Idle</span>
+      </div>
+      <span class="shortcut-hint">Alt+S</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="controls">
+
+    <!-- Speed -->
+    <div class="control-group">
+      <div class="control-label">
+        <span>Speed</span>
+        <span class="control-value" id="speed-display">2 px/tick</span>
+      </div>
+      <input type="range" id="speed-slider" min="1" max="15" value="2" step="1">
+      <div class="speed-labels">
+        <span>Slow</span>
+        <span>Medium</span>
+        <span>Fast</span>
+      </div>
+    </div>
+
+    <!-- Direction -->
+    <div class="control-group">
+      <div class="control-label">Direction</div>
+      <div class="direction-btns">
+        <button class="dir-btn active" id="dir-down" data-dir="down">▼ Down</button>
+        <button class="dir-btn" id="dir-up" data-dir="up">▲ Up</button>
+      </div>
+    </div>
+
+    <!-- Pause on Hover -->
+    <div class="toggle-row">
+      <div class="toggle-label">
+        <span class="toggle-title">Pause on hover</span>
+        <span class="toggle-desc">Stop scrolling when mouse moves</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="hover-toggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- Show floating button -->
+    <div class="toggle-row">
+      <div class="toggle-label">
+        <span class="toggle-title">Floating button</span>
+        <span class="toggle-desc">Show overlay button on page</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="float-toggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <span class="footer-text">Right-click button for settings</span>
+    <button class="show-btn-link" id="show-float-btn">Show button</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
