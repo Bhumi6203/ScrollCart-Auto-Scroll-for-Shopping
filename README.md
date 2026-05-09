@@ -6,6 +6,8 @@ So why don't shopping sites have that?
 
 If you've ever spent an entire day scrolling through Myntra or Amazon looking for the perfect product — you know how tiring it gets. ScrollMate fixes that. It brings auto scroll to any website, so you can sit back, browse, and actually enjoy shopping without your finger going numb.
 
+![ScrollMate Demo](scrollcartgif.gif)
+
 ---
 
 ## The Problem
